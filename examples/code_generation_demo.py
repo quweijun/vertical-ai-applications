@@ -58,7 +58,8 @@ def demo_code_generation():
         debug_result = debugger.analyze_error(error_msg, "示例代码")
         print(f"错误类型: {debug_result['error_type']}")
         print(f"可能原因: {debug_result['possible_causes'][0]}")
-        print(f"解决方案: {debug_result['solutions'][0]}")
+        # 修复：使用 fix_suggestions 而不是 solutions
+        print(f"修复建议: {debug_result['fix_suggestions'][0]}")
     
     # 3. 代码审查演示
     print("\n3. 代码审查演示")
