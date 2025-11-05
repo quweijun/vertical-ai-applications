@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-垂直领域AI应用项目 - 主程序
+垂直领域AI应用项目 - 主程序111
 """
 
 import sys
