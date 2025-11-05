@@ -4,7 +4,7 @@
 """
 
 from .stock_analyzer import StockAnalyzer
-from .investment_advisor import InvestmentAdvisor
+from .investment_advisor import InvestmentAdvisor, RiskTolerance, InvestmentGoal, InvestmentHorizon
 from .risk_assessor import RiskAssessor
 
-__all__ = ['StockAnalyzer', 'InvestmentAdvisor', 'RiskAssessor']
+__all__ = ['StockAnalyzer', 'InvestmentAdvisor', 'RiskAssessor', 'RiskTolerance', 'InvestmentGoal', 'InvestmentHorizon']

@@ -40,7 +40,7 @@ class SymptomChecker:
             "additional_questions": [],
             "risk_assessment": "低风险",
             "urgency_level": "常规",
-            "recommendation": "建议观察，如有加重请就医",
+            "recommendation": "建议观察，如有加重请就医",  # 确保有recommendation键
             "emergency_warning": False
         }
         
@@ -92,6 +92,7 @@ class SymptomChecker:
         if any(symptom in ['高烧', '持续发烧', '剧烈头痛'] for symptom in initial_symptoms):
             check_result["risk_assessment"] = "中高风险"
             check_result["urgency_level"] = "尽快就医"
+            check_result["recommendation"] = "建议尽快就医"
         
         return check_result
     
@@ -186,7 +187,7 @@ class SymptomChecker:
                     "保持规律的作息时间"
                 ])
         
-        # 通用建议
+        # 通用建议 
         advice.extend([
             "保持充足的睡眠",
             "均衡饮食，多吃蔬菜水果",

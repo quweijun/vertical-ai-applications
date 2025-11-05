@@ -12,7 +12,7 @@ import numpy as np
 from datetime import datetime, timedelta
 
 from financial_analysis.stock_analyzer import StockAnalyzer
-from financial_analysis.investment_advisor import InvestmentAdvisor
+from financial_analysis.investment_advisor import InvestmentAdvisor, RiskTolerance, InvestmentGoal, InvestmentHorizon
 from financial_analysis.risk_assessor import RiskAssessor
 
 def generate_sample_stock_data(symbol: str, days: int = 100) -> pd.DataFrame:
@@ -85,10 +85,16 @@ def demo_financial_analysis():
     for profile in risk_profiles:
         portfolio = advisor.create_portfolio(profile, investment_amount)
         print(f"\n{profile} 风险偏好:")
-        print(f"  股票: {portfolio['allocation']['stocks']}%")
-        print(f"  债券: {portfolio['allocation']['bonds']}%")
-        print(f"  现金: {portfolio['allocation']['cash']}%")
-        print(f"  预期收益: {portfolio['expected_return']['min']}%-{portfolio['expected_return']['max']}%")
+        # 修复：使用 get 方法安全访问 allocation 键
+        allocation = portfolio.get('allocation', portfolio.get('asset_allocation', {}))
+        print(f"  股票: {allocation.get('stocks', 0)*100:.1f}%")
+        print(f"  债券: {allocation.get('bonds', 0)*100:.1f}%")
+        print(f"  现金: {allocation.get('cash', 0)*100:.1f}%")
+        
+        # 修复：安全访问 expected_return
+        expected_return = portfolio.get('expected_performance', {})
+        if expected_return:
+            print(f"  预期收益: {expected_return.get('expected_annual_return', 0)*100:.1f}%")
     
     # 3. 风险评估演示
     print("\n3. 风险评估演示")

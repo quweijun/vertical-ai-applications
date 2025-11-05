@@ -247,6 +247,15 @@ class InvestmentAdvisor:
                 "indicators": ["VIX指数", "投资者信心指数", "资金流向"]
             }
         }
+
+    def create_portfolio(self, risk_profile: str, investment_amount: float) -> Dict[str, Any]:
+        """创建投资组合 - 这是演示中调用的方法"""
+        return self.create_investment_portfolio(
+            risk_tolerance=risk_profile,
+            investment_amount=investment_amount,
+            investment_goal=InvestmentGoal.GROWTH.value,
+            time_horizon=InvestmentHorizon.MEDIUM_TERM.value
+        )
     
     def create_investment_portfolio(self, 
                                   risk_tolerance: str,
@@ -297,6 +306,7 @@ class InvestmentAdvisor:
                 "creation_date": datetime.now().strftime("%Y-%m-%d")
             },
             "asset_allocation": asset_allocation,
+            "allocation": asset_allocation,  # 添加兼容性键，用于演示代码
             "allocation_breakdown": allocation_breakdown,
             "investment_suggestions": investment_suggestions,
             "expected_performance": expected_performance,
@@ -782,7 +792,7 @@ class InvestmentAdvisor:
             base_considerations.append("合理安排分红再投资时间")
         
         return base_considerations
-    
+
     def assess_investment_suitability(self, 
                                     risk_tolerance: str,
                                     investment_amount: float, 

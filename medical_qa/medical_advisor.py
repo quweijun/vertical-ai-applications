@@ -1,3 +1,8 @@
+"""
+医疗问答系统模块
+提供症状分析、药品信息和医疗建议功能
+"""
+
 from typing import Dict, List, Any
 from datetime import datetime, timedelta
 
@@ -16,19 +21,29 @@ class MedicalAdvisor:
                 'name': '头痛',
                 'possible_causes': ['紧张性头痛', '偏头痛', '感冒', '疲劳'],
                 'self_care': ['休息', '保持水分', '避免强光', '适当按摩'],
-                'see_doctor': '如持续不缓解或加重'
+                'see_doctor': '如持续不缓解或加重',
+                'recommendation': '建议观察，如症状持续请就医'
             },
             'fever': {
                 'name': '发烧',
                 'possible_causes': ['感染', '炎症', '免疫反应'],
                 'self_care': ['多喝水', '物理降温', '充足休息'],
-                'see_doctor': '体温超过39°C或持续3天以上'
+                'see_doctor': '体温超过39°C或持续3天以上',
+                'recommendation': '建议测量体温，如高热请就医'
             },
             'cough': {
                 'name': '咳嗽',
                 'possible_causes': ['感冒', '过敏', '支气管炎'],
                 'self_care': ['多喝温水', '蜂蜜水', '避免刺激'],
-                'see_doctor': '咳嗽持续2周以上或伴有胸痛'
+                'see_doctor': '咳嗽持续2周以上或伴有胸痛',
+                'recommendation': '建议观察，如持续咳嗽请就医'
+            },
+            'fatigue': {
+                'name': '乏力',
+                'possible_causes': ['过度劳累', '贫血', '病毒感染'],
+                'self_care': ['充足睡眠', '均衡饮食', '适当休息'],
+                'see_doctor': '持续乏力超过一周',
+                'recommendation': '建议休息观察，如持续请就医检查'
             }
         }
     
@@ -57,26 +72,48 @@ class MedicalAdvisor:
             "self_care_advice": [],
             "when_to_see_doctor": [],
             "urgency": "low",
+            "recommendation": "建议观察，如有加重请就医",  # 确保有recommendation键
             "disclaimer": self.disclaimer
         }
         
         for symptom in symptoms:
             symptom_lower = symptom.lower()
+            matched = False
+            
             for key, info in self.symptom_db.items():
                 if key in symptom_lower or info['name'] in symptom:
                     analysis["possible_conditions"].extend(info['possible_causes'])
                     analysis["self_care_advice"].extend(info['self_care'])
                     analysis["when_to_see_doctor"].append(info['see_doctor'])
+                    # 使用症状特定的建议
+                    analysis["recommendation"] = info.get('recommendation', '建议就医检查')
+                    matched = True
+            
+            if not matched:
+                analysis["possible_conditions"].append("需要进一步诊断")
+                analysis["self_care_advice"].append("建议咨询医生")
+                analysis["recommendation"] = "建议就医进行专业诊断"
         
         # 去重
         analysis["possible_conditions"] = list(set(analysis["possible_conditions"]))
         analysis["self_care_advice"] = list(set(analysis["self_care_advice"]))
         
         # 风险评估
-        if len(symptoms) >= 3:
+        symptom_count = len(symptoms)
+        if symptom_count >= 3:
             analysis["urgency"] = "medium"
-        if any(s in ['呼吸', '胸痛', '意识'] for s in symptoms):
+            analysis["recommendation"] = "建议尽快就医检查"
+        
+        # 特定症状风险升级
+        if any(symptom in ['高烧', '持续发烧', '剧烈头痛'] for symptom in symptoms):
+            analysis["urgency"] = "medium"
+            analysis["recommendation"] = "建议尽快就医"
+        
+        # 紧急情况
+        emergency_symptoms = ['胸痛', '呼吸困难', '意识模糊', '大出血']
+        if any(emergency in symptoms for emergency in emergency_symptoms):
             analysis["urgency"] = "high"
+            analysis["recommendation"] = "建议立即就医或拨打急救电话"
         
         return analysis
     
@@ -91,7 +128,7 @@ class MedicalAdvisor:
                     "purpose": info['purpose'],
                     "dosage": info['dosage'],
                     "precautions": info['precautions'],
-                    "disclaimer": "请遵医嘱使用"
+                    "disclaimer": "请遵医嘱使用药物"
                 }
         
         return {"error": f"未找到药品 '{drug_name}' 的信息"}
